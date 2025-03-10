@@ -17,6 +17,7 @@ class Task {
     runInAction(() => {
       this.completed = !this.completed;
       this.updateSubtasksCompletion(this.completed);
+      this.updateParentCompletion();
     });
   }
   addSubtasks(title: string) {
@@ -33,6 +34,19 @@ class Task {
         subtask.updateSubtasksCompletion(completed);
       });
     });
+  }
+  updateParentCompletion() {
+    if (this.parent) {
+      if (this.completed) {
+        if (this.parent.allSubtasksCompleted) {
+          this.parent.completed = true;
+          this.parent.updateParentCompletion();
+        }
+      } else {
+        this.parent.completed = false;
+        this.parent.updateParentCompletion();
+      }
+    }
   }
 
   get allSubtasksCompleted(): boolean {
